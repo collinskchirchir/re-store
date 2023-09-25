@@ -403,3 +403,6 @@ FodyWeavers.xsd
 *.sqlite
 *.db-shm
 *.db-wal
+
+## Visual Studio Code
+API/appsettings.json
