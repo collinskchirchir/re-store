@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Products } from "../../app/models/products";
 import agent from "../../app/api/agent";
+import NotFound from "../../app/errors/NotFound";
 
 export default function ProductDetails() {
    const {id} = useParams<{id: string}>();
@@ -18,7 +19,7 @@ export default function ProductDetails() {
    }, [id])
 
    if(loading) return <h3>Loading</h3>
-   if(!product) return <h3>Product not Found</h3>
+   if(!product) return <NotFound />
 
    return (
       <Grid container spacing={6}>
