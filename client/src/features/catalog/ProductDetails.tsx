@@ -13,7 +13,7 @@ export default function ProductDetails() {
     //   axios.get(`http://localhost:5000/api/products/${id}`)
       id && agent.Catalog.details(parseInt(id))
       .then(resp => setProduct(resp))
-      .catch(error => console.log(error.response))
+      .catch(error => console.log(error))
       .finally(() => setLoading(false))
    }, [id])
 
