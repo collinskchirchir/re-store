@@ -22,6 +22,9 @@ function App() {
         .catch(error => console.log(error))
         .finally(() => setLoading(false))
     }
+    else {
+      setLoading(false)
+    }
   }, [])
 
   const [darkMode, setDarkMode] = useState(false);
