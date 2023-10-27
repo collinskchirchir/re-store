@@ -10,7 +10,7 @@ import { LoadingButton } from "@mui/lab";
 
 export default function ProductDetails() {
    const {id} = useParams<{id: string}>();
-   const {basket} = useStoreContext();
+   const {basket, setBasket, removeItem} = useStoreContext();
    const [product, setProduct] = useState<Products | null>(null)
    const [loading, setLoading] = useState(true);
    const [quantity, setQuantity] = useState(0);
@@ -25,6 +25,29 @@ export default function ProductDetails() {
       .catch(error => console.log(error))
       .finally(() => setLoading(false))
    }, [id, item])
+
+   function handleInputChange( e: any) {
+    if(e.target.value >= 0) {
+        setQuantity(parseInt(e.target.value))
+    }
+   }
+
+   function handleUpdateCart() {
+    setSubmitting(true);
+    if(!item || quantity > item.quantity){
+        const updatedQuantity = item ? quantity - item.quantity : quantity;
+        agent.Basket.addItem(product?.id!, updatedQuantity)
+            .then(basket => setBasket(basket))
+            .catch(error => console.log(error))
+            .finally(() => setSubmitting(false))
+    } else {
+        const updatedQuantity = item.quantity - quantity;
+        agent.Basket.removeItem(product?.id!, updatedQuantity)
+            .then(() => removeItem(product?.id!, updatedQuantity))
+            .catch(error => console.log(error))
+            .finally(() => setSubmitting(false))
+    }
+   }
 
    if(loading) return <LoadingComponents message="Loading Product"/>
    if(!product) return <NotFound />
@@ -72,16 +95,19 @@ export default function ProductDetails() {
                             label="Quantity in Cart"
                             fullWidth
                             value={quantity}
+                            onChange={handleInputChange}
                         />
                     </Grid>
                     <Grid item xs={6}>
                         <LoadingButton 
+                            disabled={item?.quantity === quantity || !item && quantity === 0}
                             loading={submitting}
                             sx={{height: '55px'}}
                             color="primary"
                             size="large"
                             variant="contained"
                             fullWidth
+                            onClick={handleUpdateCart}
                         >
                             {item ? "Update Quantity" : "Add to Cart"}
                         </LoadingButton>
