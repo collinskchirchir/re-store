@@ -5,12 +5,15 @@ import { Products } from "../../app/models/products";
 import agent from "../../app/api/agent";
 import NotFound from "../../app/errors/NotFound";
 import LoadingComponents from "../../app/layout/LoadingComponent";
-import { useStoreContext } from "../../app/context/StoreContext";
 import { LoadingButton } from "@mui/lab";
+import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
+import { removeItem, setBasket } from "../basket/basketSlice";
 
 export default function ProductDetails() {
    const {id} = useParams<{id: string}>();
-   const {basket, setBasket, removeItem} = useStoreContext();
+//    const {basket, setBasket, removeItem} = useStoreContext();
+    const {basket} = useAppSelector(state => state.basket)
+    const dispatch = useAppDispatch();
    const [product, setProduct] = useState<Products | null>(null)
    const [loading, setLoading] = useState(true);
    const [quantity, setQuantity] = useState(0);
@@ -18,13 +21,13 @@ export default function ProductDetails() {
    const item = basket?.items.find(i => i.productId === product?.id);
 
    
-   useEffect(() => {
+    useEffect(() => {
         if(item) setQuantity(item.quantity);
-      id && agent.Catalog.details(parseInt(id))
-      .then(resp => setProduct(resp))
-      .catch(error => console.log(error))
-      .finally(() => setLoading(false))
-   }, [id, item])
+        id && agent.Catalog.details(parseInt(id))
+        .then(resp => setProduct(resp))
+        .catch(error => console.log(error))
+        .finally(() => setLoading(false))
+    }, [id, item])
 
    function handleInputChange( e: any) {
     if(e.target.value >= 0) {
@@ -37,13 +40,13 @@ export default function ProductDetails() {
     if(!item || quantity > item.quantity){
         const updatedQuantity = item ? quantity - item.quantity : quantity;
         agent.Basket.addItem(product?.id!, updatedQuantity)
-            .then(basket => setBasket(basket))
+            .then(basket => dispatch(setBasket(basket)))
             .catch(error => console.log(error))
             .finally(() => setSubmitting(false))
     } else {
         const updatedQuantity = item.quantity - quantity;
         agent.Basket.removeItem(product?.id!, updatedQuantity)
-            .then(() => removeItem(product?.id!, updatedQuantity))
+            .then(() => dispatch(removeItem({productId: product?.id!, quantity: updatedQuantity})))
             .catch(error => console.log(error))
             .finally(() => setSubmitting(false))
     }
