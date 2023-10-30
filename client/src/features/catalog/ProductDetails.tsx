@@ -1,32 +1,27 @@
 import { Divider, Grid, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Products } from "../../app/models/products";
-import agent from "../../app/api/agent";
 import NotFound from "../../app/errors/NotFound";
 import LoadingComponents from "../../app/layout/LoadingComponent";
 import { LoadingButton } from "@mui/lab";
 import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
 import { addBasketItemAsync, removeBasketItemAsync } from "../basket/basketSlice";
+import { fetchProductAsync, productSelectors } from "./catalogSlice";
 
 export default function ProductDetails() {
    const {id} = useParams<{id: string}>();
-//    const {basket, setBasket, removeItem} = useStoreContext();
     const {basket, status} = useAppSelector(state => state.basket)
     const dispatch = useAppDispatch();
-   const [product, setProduct] = useState<Products | null>(null)
-   const [loading, setLoading] = useState(true);
+    const product   = useAppSelector(state => productSelectors.selectById(state, id!));
+    const {status: productStatus} = useAppSelector(state => state.catalog)
    const [quantity, setQuantity] = useState(0);
    const item = basket?.items.find(i => i.productId === product?.id);
 
    
     useEffect(() => {
         if(item) setQuantity(item.quantity);
-        id && agent.Catalog.details(parseInt(id))
-        .then(resp => setProduct(resp))
-        .catch(error => console.log(error))
-        .finally(() => setLoading(false))
-    }, [id, item])
+        if (!product && id) dispatch(fetchProductAsync(parseInt(id)))
+    }, [id, item, dispatch, product])
 
    function handleInputChange( e: any) {
     if(e.target.value >= 0) {
@@ -44,7 +39,7 @@ export default function ProductDetails() {
     }
    }
 
-   if(loading) return <LoadingComponents message="Loading Product"/>
+   if(productStatus.includes('pending')) return <LoadingComponents message="Loading Product"/>
    if(!product) return <NotFound />
 
    return (
