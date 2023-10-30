@@ -1,6 +1,7 @@
 import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
 import { Products } from "../../app/models/products";
 import agent from "../../app/api/agent";
+import { RootState } from "../../app/store/configureStore";
 
 const productsAdapter = createEntityAdapter<Products>();
 
@@ -36,3 +37,5 @@ export const catalogSlice = createSlice({
       });
    })
 })
+
+export const productSelectors = productsAdapter.getSelectors((state: RootState) => state.catalog)
