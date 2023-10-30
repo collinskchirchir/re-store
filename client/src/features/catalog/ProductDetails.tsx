@@ -32,10 +32,10 @@ export default function ProductDetails() {
    function handleUpdateCart() {
     if(!item || quantity > item.quantity){
         const updatedQuantity = item ? quantity - item.quantity : quantity;
-        dispatch(addBasketItemAsync({productId: item?.productId!, quantity: updatedQuantity}))
+        dispatch(addBasketItemAsync({productId: product?.id!, quantity: updatedQuantity}))
     } else {
         const updatedQuantity = item.quantity - quantity;
-        dispatch(removeBasketItemAsync({productId: item.productId, quantity: updatedQuantity}))
+        dispatch(removeBasketItemAsync({productId: product?.id!, quantity: updatedQuantity}))
     }
    }
 
@@ -91,7 +91,7 @@ export default function ProductDetails() {
                     <Grid item xs={6}>
                         <LoadingButton 
                             disabled={item?.quantity === quantity || !item && quantity === 0}
-                            loading={status.includes('pendingRemoveItem' + item?.productId)}
+                            loading={status.includes('pending')}
                             sx={{height: '55px'}}
                             color="primary"
                             size="large"
