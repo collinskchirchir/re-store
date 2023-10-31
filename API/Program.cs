@@ -29,7 +29,7 @@ if (app.Environment.IsDevelopment())
 }
 app.UseCors(opt => 
 {
-    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:5174");
+    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:5173");
 });
 
 // app.UseHttpsRedirection();
