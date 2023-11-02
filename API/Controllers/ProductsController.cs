@@ -18,7 +18,7 @@ namespace API.Controllers
           _context = context;           
         }
         [HttpGet]
-        public async Task<ActionResult<PagedList<Product>>> GetProducts(
+        public async Task<ActionResult<PagedList<Product>>> GetProducts([FromQuery]
           ProductParams productParams
           )
         {
@@ -29,7 +29,8 @@ namespace API.Controllers
               .AsQueryable();
 
             var products = await PagedList<Product>.ToPagedList(query, productParams.PageNumber, productParams.PageSize);
-            Response.Headers.Add("Pagination", JsonSerializer.Serialize(products.MetaData));
+            Response.AddPaginationHeader(products.MetaData);
+            
             return products; 
 
             
