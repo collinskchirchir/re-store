@@ -49,6 +49,7 @@ export const catalogSlice = createSlice({
    }),
    reducers: {},
    extraReducers: (builder => {
+      // fetch all products
       builder.addCase(fetchProductsAsync.pending, (state) => {
          state.status = 'pendingFetchProducts';
       });
@@ -62,10 +63,12 @@ export const catalogSlice = createSlice({
          state.status = 'idle'
       });
 
+      // fetch a single Product
       builder.addCase(fetchProductAsync.pending, (state) => {
          state.status = 'pendingFetchProduct'
       });
       builder.addCase(fetchProductAsync.fulfilled, (state, action) => {
+         // used entityAdapter
          productsAdapter.upsertOne(state, action.payload);
          state.status = 'idle';
       });
@@ -88,10 +91,6 @@ export const catalogSlice = createSlice({
          console.log(action.payload);
          state.status = 'idle';
       })
-
-
-
-
    })
 })
 
