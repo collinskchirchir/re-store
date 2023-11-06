@@ -2,7 +2,7 @@ import LoadingComponents from "../../app/layout/LoadingComponent";
 import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
 import ProductList from "./ProductList";
 import {useEffect} from "react"
-import { fetchFilters, fetchProductsAsync, productSelectors, setProductParams } from "./catalogSlice";
+import { fetchFilters, fetchProductsAsync, productSelectors, setPageNumber, setProductParams } from "./catalogSlice";
 import { Grid, Paper } from "@mui/material";
 import ProductSearch from "./ProductSearch";
 import RadioButtonGroup from "../../app/components/RadioButtonGroup";
@@ -66,7 +66,7 @@ export default function Catalog(){
          <Grid item xs={9} sx={{mb: 2}}>
             <AppPagination 
                metaData={metaData}
-               onPageChange={(page: number) => dispatch(setProductParams({pageNumber: page}))}
+               onPageChange={(page: number) => dispatch(setPageNumber({pageNumber: page}))}
             />
                 
          </Grid>
