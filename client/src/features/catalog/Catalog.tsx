@@ -17,7 +17,7 @@ const sortOptions = [
 
 export default function Catalog(){
    const products = useAppSelector(productSelectors.selectAll);
-   const { productsLoaded, status, filtersLoaded, brands, types, productParams, metaData } = useAppSelector(state => state.catalog)
+   const { productsLoaded, filtersLoaded, brands, types, productParams, metaData } = useAppSelector(state => state.catalog)
    const dispatch = useAppDispatch();
 
    useEffect(() => { 
@@ -29,7 +29,7 @@ export default function Catalog(){
       if(!filtersLoaded) dispatch(fetchFilters());      
    }, [fetchFilters, dispatch])
 
-   if (status.includes('pending') || !metaData) return <LoadingComponents message="Loading Products..."/>
+   if (!filtersLoaded) return <LoadingComponents message="Loading Products..."/>
 
    return ( 
       <Grid container columnSpacing={4}> 
@@ -64,10 +64,11 @@ export default function Catalog(){
          </Grid>
          <Grid item xs={3} />
          <Grid item xs={9} sx={{mb: 2}}>
+            {metaData &&
             <AppPagination 
                metaData={metaData}
                onPageChange={(page: number) => dispatch(setPageNumber({pageNumber: page}))}
-            />
+            />}
                 
          </Grid>
       </Grid>
