@@ -20,7 +20,10 @@ builder.Services.AddDbContext<StoreContext>(opt => {
 builder.Services.AddCors();
 
 // setting up Identity
-builder.Services.AddIdentityCore<User>()
+builder.Services.AddIdentityCore<User>(opt => 
+{
+    opt.User.RequireUniqueEmail = true;
+})
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<StoreContext>();
 builder.Services.AddAuthentication();
