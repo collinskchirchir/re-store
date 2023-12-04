@@ -6,12 +6,15 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Paper } from "@mui/material";
 import Box from "@mui/material/Box";
-import { Link } from "react-router-dom";
-import agent from "../../app/api/agent";
+import { Link, useNavigate } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
 import { useForm, FieldValues } from "react-hook-form";
+import { useAppDispatch } from "../../app/store/configureStore";
+import { signInUser } from "./accountSlice";
 
 export default function Login() {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const {
     register,
     handleSubmit,
@@ -20,7 +23,8 @@ export default function Login() {
     mode: "onTouched",
   });
   async function submitForm(data: FieldValues) {
-    await agent.Account.login(data);
+    await dispatch(signInUser(data));
+    navigate("/catalog");
   }
   return (
     <Container
