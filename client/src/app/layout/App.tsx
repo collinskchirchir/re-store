@@ -1,64 +1,72 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Header from "../../features/catalog/Header";
-import { Container, CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import {
+  Container,
+  CssBaseline,
+  ThemeProvider,
+  createTheme,
+} from "@mui/material";
 import { Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-import { getCookie } from "../util/util";
-import agent from "../api/agent";
+import "react-toastify/dist/ReactToastify.css";
 import LoadingComponents from "./LoadingComponent";
 import { useAppDispatch } from "../store/configureStore";
-import { setBasket } from "../../features/basket/basketSlice";
+import { fetchBasketAsync } from "../../features/basket/basketSlice";
 import { fetchCurrentUser } from "../../features/account/accountSlice";
-
 
 function App() {
   // const {setBasket} = useStoreContext();
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const buyerId = getCookie('buyerId');
-    dispatch(fetchCurrentUser())
-    if (buyerId) {
-      agent.Basket.get()
-        .then(basket => dispatch(setBasket(basket)))
-        .catch(error => console.log(error))
-        .finally(() => setLoading(false))
-    }
-    else {
-      setLoading(false)
+  // async function to initialize App
+  // memorize this fn an make sure it doesn't change on any re-render
+  const initApp = useCallback(async () => {
+    try {
+      // fetch currrentUser & Basket from localStorage & CookieStorage respectively
+      await dispatch(fetchCurrentUser());
+      await dispatch(fetchBasketAsync());
+    } catch (error) {
+      console.log(error);
     }
   }, [dispatch])
 
+  useEffect(() => {
+    initApp().then(() => setLoading(false));
+  }, [initApp]);
+
   const [darkMode, setDarkMode] = useState(false);
-  const paletteType = darkMode ? 'dark' : 'light';
+  const paletteType = darkMode ? "dark" : "light";
   const theme = createTheme({
     palette: {
-      mode: paletteType, 
+      mode: paletteType,
       background: {
-        default: paletteType === 'light' ? '#eaeaea' : '#121212'
-      }
-    }
-  })   
+        default: paletteType === "light" ? "#eaeaea" : "#121212",
+      },
+    },
+  });
   function handleThemeChange() {
-    setDarkMode(!darkMode)
+    setDarkMode(!darkMode);
   }
-    
-  if (loading) return <LoadingComponents message="initializing app..." />
+
+  if (loading) return <LoadingComponents message="initializing app..." />;
 
   return (
     <>
-    <ThemeProvider theme={theme}>
-    <ToastContainer position="bottom-right" hideProgressBar theme="colored" />
-      <CssBaseline />
-      <Header darkMode={darkMode} handleThemeChange={handleThemeChange}/>
-      <Container>
-        <Outlet />
-      </Container>  
-    </ThemeProvider>
+      <ThemeProvider theme={theme}>
+        <ToastContainer
+          position="bottom-right"
+          hideProgressBar
+          theme="colored"
+        />
+        <CssBaseline />
+        <Header darkMode={darkMode} handleThemeChange={handleThemeChange} />
+        <Container>
+          <Outlet />
+        </Container>
+      </ThemeProvider>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
