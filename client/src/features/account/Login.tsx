@@ -6,7 +6,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Paper } from "@mui/material";
 import Box from "@mui/material/Box";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
 import { useForm, FieldValues } from "react-hook-form";
 import { useAppDispatch } from "../../app/store/configureStore";
@@ -14,6 +14,8 @@ import { signInUser } from "./accountSlice";
 
 export default function Login() {
   const navigate = useNavigate();
+  // check if we have a 'from' location to send them to after login
+  const location = useLocation();
   const dispatch = useAppDispatch();
   const {
     register,
@@ -25,7 +27,7 @@ export default function Login() {
   async function submitForm(data: FieldValues) {
     try {
       await dispatch(signInUser(data));
-      navigate("/catalog");      
+      navigate(location.state?.from || "/catalog");      
     } catch (error) {
       console.log(error)
     }
