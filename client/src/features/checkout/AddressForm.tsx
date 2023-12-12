@@ -1,24 +1,18 @@
-import {
-  Typography,
-  Grid,
-  FormControlLabel,
-  Checkbox,
-  Button,
-} from "@mui/material";
-import { useForm } from "react-hook-form";
+import { Typography, Grid, FormControlLabel, Checkbox } from "@mui/material";
+import { useFormContext } from "react-hook-form";
 import AppTextInput from "../../app/components/AppTextInput";
 
 export default function AddressForm() {
-  const { control, handleSubmit } = useForm();
+  const { control } = useFormContext();
   return (
     <>
       <Typography variant="h6" gutterBottom>
         Shipping address
       </Typography>
-      <form onSubmit={handleSubmit((data) => console.log(data))}>
+
       <Grid container spacing={3}>
         <Grid item xs={12} sm={12}>
-          <AppTextInput control={control} name="fullName" label="Full name" />        
+          <AppTextInput control={control} name="fullName" label="Full name" />
         </Grid>
         <Grid item xs={12}>
           <AppTextInput control={control} name="address1" label="Address 1" />
@@ -47,8 +41,6 @@ export default function AddressForm() {
           />
         </Grid>
       </Grid>
-      <Button type="submit">Submit Form</Button>
-      </form>
     </>
   );
 }
