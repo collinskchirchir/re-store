@@ -95,11 +95,16 @@ const Account = {
 const Orders = {
    list: () => requests.get('orders'),
    fetch: (id: number) => requests.get(`orders/${id}`),
-   create: (values: any) => requests.post('orders', values)   
+   create: (values: any) => requests.post('orders', values)
+}
+
+// Stripe payment intent
+const Payments = {
+   createPaymentIntent: () => requests.post('payments', {})
 }
 
 const agent = {
-   Catalog, TestErrors, Basket, Account, Orders
+   Catalog, TestErrors, Basket, Account, Orders, Payments
 };
 
 export default agent;
