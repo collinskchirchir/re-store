@@ -16,7 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c => {
+builder.Services.AddSwaggerGen(c =>
+{
     var jwtSecurityScheme = new OpenApiSecurityScheme
     {
         BearerFormat = "JWT",
@@ -41,21 +42,23 @@ builder.Services.AddSwaggerGen(c => {
     });
 });
 
-builder.Services.AddDbContext<StoreContext>(opt => {
+builder.Services.AddDbContext<StoreContext>(opt =>
+{
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
 builder.Services.AddCors();
 
 // setting up Identity
-builder.Services.AddIdentityCore<User>(opt => 
+builder.Services.AddIdentityCore<User>(opt =>
 {
     opt.User.RequireUniqueEmail = true;
 })
     .AddRoles<Role>()
     .AddEntityFrameworkStores<StoreContext>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(opt => {
+    .AddJwtBearer(opt =>
+    {
         opt.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = false,
@@ -77,11 +80,16 @@ app.UseMiddleware<ExceptionMiddleware>();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c => {
+    app.UseSwaggerUI(c =>
+    {
         c.ConfigObject.AdditionalItems.Add("persistAuthorization", true);
     });
 }
-app.UseCors(opt => 
+// look for index.html file
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+app.UseCors(opt =>
 {
     opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:5173");
 });
@@ -91,6 +99,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapFallbackToController("Index", "Fallback");
 
 var scope = app.Services.CreateScope();
 var context = scope.ServiceProvider.GetRequiredService<StoreContext>();
